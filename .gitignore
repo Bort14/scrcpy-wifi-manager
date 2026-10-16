@@ -1,0 +1,12 @@
+**/bin/
+**/obj/
+.vs/
+.vscode/*.user
+.idea/
+dist/
+*.user
+*.suo
+*.cache
+settings.json
+tablet_ip.txt
+.DS_Store
