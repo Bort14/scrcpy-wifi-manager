@@ -54,10 +54,13 @@ public static class CommandRunner
             UseShellExecute = false,
             CreateNoWindow = true,
             RedirectStandardOutput = redirect,
-            RedirectStandardError = redirect,
-            StandardOutputEncoding = Encoding.UTF8,
-            StandardErrorEncoding = Encoding.UTF8
+            RedirectStandardError = redirect
         };
+        if (redirect)
+        {
+            psi.StandardOutputEncoding = Encoding.UTF8;
+            psi.StandardErrorEncoding = Encoding.UTF8;
+        }
         foreach (var arg in args) psi.ArgumentList.Add(arg); // Never invoke cmd.exe or concatenate untrusted args.
         return new Process { StartInfo = psi };
     }
