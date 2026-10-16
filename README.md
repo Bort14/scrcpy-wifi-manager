@@ -38,19 +38,13 @@ The downloadable application is published as a self-contained .NET executable, s
 
 ### Install and launch
 
-1. Download `scrcpy-wifi-manager-win-x64.zip` from [GitHub Releases](https://github.com/Bort14/scrcpy-wifi-manager/releases/latest).
-2. Extract the ZIP archive to a folder you can write to.
-3. Run `ScrcpyWifiManager.exe`. The dashboard opens at <http://127.0.0.1:5088>.
+1. Download [`ScrcpyWifiManager.exe`](https://github.com/Bort14/scrcpy-wifi-manager/releases/latest/download/ScrcpyWifiManager.exe) from [GitHub Releases](https://github.com/Bort14/scrcpy-wifi-manager/releases/latest).
+2. Save the executable anywhere on your PC and run it. No extraction or additional application files are required.
+3. The dashboard opens at <http://127.0.0.1:5088>.
 4. Connect your Android device over USB, enable USB debugging, and approve the authorization prompt.
 5. In the dashboard, refresh the device list and launch mirroring.
 
-Keep the application running while using the dashboard. To open it without automatically launching a browser, run `ScrcpyWifiManager.exe --no-browser` and open the local URL yourself.
-
-To verify the downloaded archive, compare its SHA-256 hash with the value in `SHA256SUMS.txt`:
-
-```powershell
-Get-FileHash .\scrcpy-wifi-manager-win-x64.zip -Algorithm SHA256
-```
+The release is a single, self-contained Windows executable. The dashboard assets and .NET runtime are bundled into the `.exe`; no console window or separate app files are needed. Keep the application running while using the dashboard. To open it without automatically launching a browser, run `ScrcpyWifiManager.exe --no-browser` and open the local URL yourself.
 
 ## Connect over Wi-Fi
 
@@ -91,15 +85,13 @@ dotnet publish src/ScrcpyWifiManager/ScrcpyWifiManager.csproj `
   --configuration Release `
   --runtime win-x64 `
   --self-contained true `
-  -p:PublishSingleFile=true `
   -p:EnableCompressionInSingleFile=true `
-  -p:IncludeNativeLibrariesForSelfExtract=true `
   -p:DebugType=None `
   -p:DebugSymbols=false `
   --output dist
 ```
 
-The `Build Windows` GitHub Actions workflow builds and packages the app on pushes and pull requests. Pushing a version tag such as `v0.1.0` also creates a GitHub Release with the Windows ZIP and its SHA-256 checksum attached.
+The `Build Windows` GitHub Actions workflow builds the standalone executable on pushes and pull requests. Pushing a version tag such as `v0.1.1` also creates a GitHub Release with `ScrcpyWifiManager.exe` attached.
 
 ## Contributing
 

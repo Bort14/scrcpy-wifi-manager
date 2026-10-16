@@ -1,10 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <AssemblyName>ScrcpyWifiManager</AssemblyName>
     <RootNamespace>ScrcpyWifiManager</RootNamespace>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <IsTransformWebConfigDisabled>true</IsTransformWebConfigDisabled>
   </PropertyGroup>
+  <ItemGroup>
+    <Content Remove="wwwroot\**\*" />
+    <EmbeddedResource Include="wwwroot\**\*" LogicalName="ScrcpyWifiManager.Web.%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+  <Target Name="RemoveUnusedStaticWebAssetsManifest" AfterTargets="Publish">
+    <Delete Files="$(PublishDir)$(AssemblyName).staticwebassets.endpoints.json" />
+  </Target>
 </Project>

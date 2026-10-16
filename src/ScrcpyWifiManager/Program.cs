@@ -7,8 +7,20 @@ using ScrcpyWifiManager;
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseUrls("http://127.0.0.1:5088");
 var app = builder.Build();
-app.UseDefaultFiles();
-app.UseStaticFiles();
+var assembly = typeof(AppConfig).Assembly;
+string ReadDashboardAsset(string name)
+{
+    using var stream = assembly.GetManifestResourceStream($"ScrcpyWifiManager.Web.{name}")
+        ?? throw new InvalidOperationException($"Dashboard asset '{name}' was not embedded.");
+    using var reader = new StreamReader(stream);
+    return reader.ReadToEnd();
+}
+var dashboardHtml = ReadDashboardAsset("index.html");
+var dashboardScript = ReadDashboardAsset("app.js");
+var dashboardStyles = ReadDashboardAsset("styles.css");
+app.MapGet("/", () => Results.Content(dashboardHtml, "text/html; charset=utf-8"));
+app.MapGet("/app.js", () => Results.Content(dashboardScript, "text/javascript; charset=utf-8"));
+app.MapGet("/styles.css", () => Results.Content(dashboardStyles, "text/css; charset=utf-8"));
 
 // Strictly local control surface. No LAN listening or remote control.
 app.Use(async (context, next) =>

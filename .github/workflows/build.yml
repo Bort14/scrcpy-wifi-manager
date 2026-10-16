@@ -17,22 +17,14 @@ jobs:
           dotnet-version: '10.0.x'
       - name: Publish self-contained Windows app
         shell: pwsh
-        run: dotnet publish src/ScrcpyWifiManager/ScrcpyWifiManager.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugType=None -p:DebugSymbols=false -o dist
-      - name: Package
-        shell: pwsh
-        run: |
-          Compress-Archive -Path dist/* -DestinationPath scrcpy-wifi-manager-win-x64.zip
-          $hash = (Get-FileHash scrcpy-wifi-manager-win-x64.zip -Algorithm SHA256).Hash.ToLowerInvariant()
-          "$hash  scrcpy-wifi-manager-win-x64.zip" | Set-Content -Path SHA256SUMS.txt -Encoding ascii
+        run: dotnet publish src/ScrcpyWifiManager/ScrcpyWifiManager.csproj -c Release -r win-x64 --self-contained true -p:EnableCompressionInSingleFile=true -p:DebugType=None -p:DebugSymbols=false -o dist
       - uses: actions/upload-artifact@v4
         with:
-          name: scrcpy-wifi-manager-win-x64
-          path: |
-            scrcpy-wifi-manager-win-x64.zip
-            SHA256SUMS.txt
+          name: ScrcpyWifiManager-windows-x64
+          path: dist/ScrcpyWifiManager.exe
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/v')
         env:
           GH_TOKEN: ${{ github.token }}
         shell: pwsh
-        run: gh release create "$env:GITHUB_REF_NAME" scrcpy-wifi-manager-win-x64.zip SHA256SUMS.txt --title "Scrcpy WiFi Manager $env:GITHUB_REF_NAME" --generate-notes
+        run: gh release create "$env:GITHUB_REF_NAME" dist/ScrcpyWifiManager.exe --title "Scrcpy WiFi Manager $env:GITHUB_REF_NAME" --generate-notes
