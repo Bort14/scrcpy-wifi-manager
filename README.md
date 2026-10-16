@@ -2,121 +2,109 @@
 
 # Scrcpy WiFi Manager
 
-**Your Android, untethered.**  
-A modern, dark-mode control dashboard for **scrcpy** on Windows.
+**A simple Windows dashboard for managing USB and Wi-Fi connections to [scrcpy](https://github.com/Genymobile/scrcpy).**
 
-![Platform](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D4?logo=windows) ![.NET](https://img.shields.io/badge/.NET-10-7952B3?logo=dotnet) ![License](https://img.shields.io/badge/license-MIT-green) ![Status](https://img.shields.io/badge/status-beta-orange)
+[![Build Windows](https://github.com/Bort14/scrcpy-wifi-manager/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/Bort14/scrcpy-wifi-manager/actions/workflows/build.yml)
+[![Latest release](https://img.shields.io/github/v/release/Bort14/scrcpy-wifi-manager?display_name=tag)](https://github.com/Bort14/scrcpy-wifi-manager/releases/latest)
+[![Status: Beta](https://img.shields.io/badge/Status-Beta-orange.svg)](https://github.com/Bort14/scrcpy-wifi-manager/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**[Features](#features) · [Quick start](#quick-start) · [How to connect](#how-to-connect) · [Build](#build-from-source)**
+[Download for Windows](https://github.com/Bort14/scrcpy-wifi-manager/releases/latest) · [Features](#features) · [Getting-started-guide](#getting-started) · [Build-from-source](#build-from-source)
 
 </div>
 
-> [!IMPORTANT]
-> This project is an **unofficial** companion GUI for [scrcpy](https://github.com/Genymobile/scrcpy). It is not affiliated with Genymobile. You must install scrcpy and ADB separately. The app does not transmit your screen through its own servers.
+Scrcpy WiFi Manager is an open-source desktop companion for [scrcpy](https://github.com/Genymobile/scrcpy). It provides a local web dashboard for launching Android screen mirroring over USB or setting up a classic ADB-over-TCP Wi-Fi connection.
 
-## Why this exists
-
-`scrcpy` is a fantastic open-source Android mirroring tool, but starting wireless sessions often means typing ADB commands. Scrcpy WiFi Manager wraps that workflow in a polished local dashboard.
+> **Unofficial project:** This application is not affiliated with, endorsed by, or maintained by the scrcpy or Android teams. It does not include or redistribute scrcpy or Android Platform Tools.
 
 ## Features
 
-| Feature | Description |
-|---|---|
-| 🔌 **USB mirroring** | Launch scrcpy on a selected USB-connected device |
-| 📶 **Wi-Fi setup** | Enable classic TCP/IP mode over USB, detect the tablet IP, and connect |
-| ⚡ **Quick reconnect** | Save multiple Android devices for future connections |
-| 🎛️ **Stream settings** | Adjust video bitrate, max FPS, max size and window title |
-| 🛠️ **Custom executables** | Use system PATH or point to your own `adb.exe` and `scrcpy.exe` |
-| 🔎 **Activity log** | Understand connection failures without a terminal |
-| 🌙 **Modern web dashboard** | Dark, responsive interface at `http://127.0.0.1:5088` |
-| 🔒 **Local-only** | Backend listens only on loopback; no cloud account required |
+- Discover authorized Android devices connected over USB.
+- Launch scrcpy for a selected USB or Wi-Fi device.
+- Set up classic ADB-over-TCP on port 5555 over USB and save a device for reconnection.
+- Configure video bitrate, frame rate, maximum size, window title, and executable paths.
+- Keep device preferences locally on your Windows account.
+- Run a responsive dashboard served only on `127.0.0.1`; no account or cloud service is required.
 
-## Screenshots
-
-The dashboard includes **Overview**, **My devices**, and **Settings**. Screenshots will be added after the first Windows UI validation. Contributions welcome.
-
-## Quick start
+## Getting started
 
 ### Requirements
 
-- Windows 10 or 11
-- [scrcpy](https://github.com/Genymobile/scrcpy/releases) and Android Platform Tools (ADB) on your PATH, **or** specify their full paths in Settings.
-- An Android device with USB debugging enabled.
-- The [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) to run from source; the self-contained Release build does not require it.
+- Windows 10 or 11, 64-bit (the downloadable release targets `win-x64`).
+- [scrcpy](https://github.com/Genymobile/scrcpy) and [Android Platform Tools (ADB)](https://developer.android.com/tools/releases/platform-tools) installed and available on `PATH`, or their executable paths configured in the dashboard.
+- An Android device with USB debugging enabled. Approve the computer's authorization prompt on the device.
 
-### Run from source (VS Code)
+The downloadable application is published as a self-contained .NET executable, so installing the .NET runtime or SDK is not required. **scrcpy and ADB are separate prerequisites** and must be installed independently.
+
+### Install and launch
+
+1. Download `scrcpy-wifi-manager-win-x64.zip` from [GitHub Releases](https://github.com/Bort14/scrcpy-wifi-manager/releases/latest).
+2. Extract the ZIP archive to a folder you can write to.
+3. Run `ScrcpyWifiManager.exe`. The dashboard opens at <http://127.0.0.1:5088>.
+4. Connect your Android device over USB, enable USB debugging, and approve the authorization prompt.
+5. In the dashboard, refresh the device list and launch mirroring.
+
+Keep the application running while using the dashboard. To open it without automatically launching a browser, run `ScrcpyWifiManager.exe --no-browser` and open the local URL yourself.
+
+To verify the downloaded archive, compare its SHA-256 hash with the value in `SHA256SUMS.txt`:
 
 ```powershell
-git clone https://github.com/YOUR_USERNAME/scrcpy-wifi-manager.git
-cd scrcpy-wifi-manager
-dotnet run --project src/ScrcpyWifiManager/ScrcpyWifiManager.csproj
+Get-FileHash .\scrcpy-wifi-manager-win-x64.zip -Algorithm SHA256
 ```
 
-The app opens the dashboard automatically in your default browser. If not, navigate to **http://127.0.0.1:5088**. The controller stays running while its process is open. To avoid opening the browser automatically, add `-- --no-browser`.
+## Connect over Wi-Fi
 
-## How to connect
+### First-time setup (USB required)
 
-### USB
+1. Connect the device over USB, authorize the computer, and connect both the device and PC to a trusted private Wi-Fi network.
+2. In **Set up wireless**, choose the authorized USB device and optionally give it a name.
+3. Select **Set up Wi-Fi**. The application reads the IPv4 address from the device's `wlan0` interface, enables ADB TCP/IP on port `5555`, connects, and saves the device.
+4. Disconnect USB and use the saved device to reconnect.
 
-1. On your Android device, enable **Developer options → USB debugging**.
-2. Plug in your phone/tablet and approve the computer fingerprint prompt.
-3. Click **Refresh devices**, select the USB device and then **Launch via USB**.
+### Reconnect
 
-### Wi-Fi — first-time setup (USB required)
+Select a saved device or enter its IPv4 address and port, then choose **Connect & mirror**. If the device reboots or its address changes, repeat the USB setup.
 
-1. Put your Android device and Windows computer on the same Wi-Fi network.
-2. Connect the Android device over USB and approve USB debugging.
-3. Under **Set up wireless**, select your USB device and optionally set a nickname.
-4. Click **Set up Wi-Fi**. The app reads `wlan0`, runs `adb tcpip 5555`, connects and saves your device.
-5. Disconnect the USB cable and use **Connect over Wi-Fi** to reconnect later.
+> **Compatibility:** Wi-Fi setup currently expects the Android Wi-Fi interface to be named `wlan0`. Some devices use another interface or restrict legacy TCP/IP debugging. Android 11 and later wireless pairing with a pairing code is not implemented.
 
-> **Note:** Some devices use a different interface name or block legacy TCP/IP debugging. The IP may change when your router assigns a new address. Some devices reset TCP/IP mode after reboot. Android 11+ native wireless pairing using an on-screen code is **not yet implemented**.
+## Security and privacy
 
-### Wi-Fi — reconnect
-
-Pick a saved device or enter its IP and port, then click **Connect & mirror**. If a reconnect fails after an Android reboot, re-enable Wi-Fi debugging using USB setup.
-
-## Settings
-
-| Setting | Default |
-|---|---|
-| Bitrate | 16 Mbps |
-| Max FPS | 60 |
-| Max size | 1920 px |
-| Window title | Tablet |
-| ADB executable | `adb` |
-| scrcpy executable | `scrcpy` |
-
-Preferences are saved under `%LOCALAPPDATA%\ScrcpyWifiManager\settings.json`.
+- The dashboard binds to `127.0.0.1` and is intended for local use on your PC.
+- Device settings are stored in `%LOCALAPPDATA%\ScrcpyWifiManager\settings.json`.
+- Commands are started directly without passing through a shell.
+- Wi-Fi setup enables legacy ADB-over-TCP on your device. Use it only on a trusted network and turn off wireless debugging or TCP/IP mode when it is no longer needed.
+- The application does not upload device information or screen content to a project server.
 
 ## Build from source
 
+Install the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0), then run:
+
 ```powershell
 dotnet restore src/ScrcpyWifiManager/ScrcpyWifiManager.csproj
-dotnet publish src/ScrcpyWifiManager/ScrcpyWifiManager.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o publish
+dotnet run --project src/ScrcpyWifiManager/ScrcpyWifiManager.csproj
 ```
 
-Run `publish/ScrcpyWifiManager.exe`. GitHub Actions builds a Windows artifact on every push to `main`; Release publication can attach it to the release automatically.
+To publish a self-contained Windows x64 build:
 
-## Security
+```powershell
+dotnet publish src/ScrcpyWifiManager/ScrcpyWifiManager.csproj `
+  --configuration Release `
+  --runtime win-x64 `
+  --self-contained true `
+  -p:PublishSingleFile=true `
+  -p:EnableCompressionInSingleFile=true `
+  -p:IncludeNativeLibrariesForSelfExtract=true `
+  -p:DebugType=None `
+  -p:DebugSymbols=false `
+  --output dist
+```
 
-- Classic `adb tcpip 5555` opens ADB over the local network without a per-session Wi-Fi pairing code. **Only use it on trusted private networks** and disable the mode or USB debugging when you do not need it.
-- The management API is bound to `127.0.0.1` and requires same-origin requests for write operations.
-- Commands launch directly via `ProcessStartInfo.ArgumentList`, not via a shell.
-- The app does not embed, modify or redistribute scrcpy/ADB executables.
-
-## Roadmap
-
-- [ ] Android 11+ wireless pairing (ADB pairing code)
-- [ ] Connected device details and visual connection diagnostics
-- [ ] Add Windows tray icon and optional autostart
-- [ ] Localization (English and Spanish)
-- [ ] Automated integration testing on Windows/Android devices
+The `Build Windows` GitHub Actions workflow builds and packages the app on pushes and pull requests. Pushing a version tag such as `v0.1.0` also creates a GitHub Release with the Windows ZIP and its SHA-256 checksum attached.
 
 ## Contributing
 
-Open an issue with reproduction steps, your Windows version and sanitized ADB output. PRs are welcome. Do not post device serials, private IPs or sensitive logs in public issues.
+Bug reports and pull requests are welcome. When reporting an issue, include your Windows version, the application version, steps to reproduce, and relevant sanitized output. Do not publish device serial numbers, private IP addresses, or other personal information.
 
-## License
+## License and third-party projects
 
-Original code in this repository: **MIT**, see [LICENSE](LICENSE). `scrcpy` and Android Platform Tools are separate projects under their respective licenses.
+The original code in this repository is licensed under the [MIT License](LICENSE). scrcpy and Android Platform Tools are independent projects; obtain them from their official sources and follow their respective licenses.
