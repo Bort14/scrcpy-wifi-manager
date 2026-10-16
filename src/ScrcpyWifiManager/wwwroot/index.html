@@ -30,7 +30,7 @@
       </div>
       <div class="navlabel">WORKSPACE</div>
       <button class="nav active" data-tab="dashboard"><svg class="icon"><use href="#icon-grid"/></svg> Overview</button>
-      <button class="nav" data-tab="devices"><svg class="icon"><use href="#icon-devices"/></svg> My devices</button>
+      <button class="nav" data-tab="devices"><svg class="icon"><use href="#icon-devices"/></svg> Configure devices</button>
       <button class="nav" data-tab="settings"><svg class="icon"><use href="#icon-settings"/></svg> Settings</button>
       <div class="sidebar-bottom">
         <div class="app-mini"><svg class="icon"><use href="#icon-shield"/></svg> Local &amp; private</div>
@@ -57,48 +57,26 @@
           <span class="status-tag" id="stateBadge">CHECKING</span>
         </div>
 
-        <div class="section-title"><h2>Choose how to connect</h2><span>SELECT A CONNECTION METHOD</span></div>
-        <div class="methods">
-          <article class="method featured">
-            <div class="method-top"><div class="method-icon wifi"><svg class="icon"><use href="#icon-wifi"/></svg></div><span class="recommended">QUICK RECONNECT</span></div>
-            <h3>Connect over Wi-Fi</h3><p>Reconnect to a saved device, or enter its network address.</p>
-            <div class="fields">
-              <label>Saved device<select id="savedDevice"><option value="">Choose a saved device</option></select></label>
-              <label>Device IP address<input id="wifiIp" placeholder="e.g. 192.168.1.100" spellcheck="false" inputmode="decimal" aria-describedby="wifiHint"/></label>
-              <label>Port<input id="wifiPort" value="5555" type="number" min="1" max="65535" aria-describedby="wifiHint"/></label>
-              <p class="field-hint" id="wifiHint">Your computer and Android device must be on the same trusted Wi-Fi network.</p>
-            </div>
-            <button class="primary" onclick="connectWifi()">Connect &amp; mirror <svg class="icon"><use href="#icon-arrow"/></svg></button>
-          </article>
-
-          <article class="method">
-            <div class="method-top"><div class="method-icon usb"><svg class="icon"><use href="#icon-usb"/></svg></div><span class="card-kicker">USB CABLE</span></div>
-            <h3>Connect with USB</h3><p>Start mirroring right away with an authorized device.</p>
-            <div class="fields">
-              <label>Connected Android device<select id="usbDevice"><option value="">Checking connected devices…</option></select></label>
-              <p class="field-hint" id="usbHint">Connect a USB cable and approve the debugging prompt on your device.</p>
-            </div>
-            <button class="secondary" onclick="connectUsb()">Start USB mirroring <svg class="icon"><use href="#icon-arrow"/></svg></button>
-          </article>
-
-          <article class="method">
-            <div class="method-top"><div class="method-icon setup"><svg class="icon"><use href="#icon-link"/></svg></div><span class="card-kicker">ONE-TIME SETUP</span></div>
-            <h3>Set up Wi-Fi</h3><p>Use USB once to enable wireless reconnection on your network.</p>
-            <div class="fields">
-              <label>Connected Android device<select id="setupDevice"><option value="">Checking connected devices…</option></select></label>
-              <label>Device name <span class="optional">(optional)</span><input id="deviceName" placeholder="e.g. My tablet" maxlength="50"/></label>
-              <p class="field-hint" id="setupHint">Keep USB connected during setup. Wireless debugging uses port 5555.</p>
-            </div>
-            <button class="secondary" onclick="setupWifi()">Set up wireless connection <svg class="icon"><use href="#icon-arrow"/></svg></button>
-          </article>
-        </div>
+        <div class="section-title"><h2>Quick connect</h2><span>YOUR SAVED DEVICES</span></div>
+        <div id="quickConnectDevices" class="quick-connect-grid"></div>
+        <section class="usb-quick-connect">
+          <div class="method-icon usb"><svg class="icon"><use href="#icon-usb"/></svg></div>
+          <div class="usb-quick-copy"><strong>Connected by USB?</strong><p>Choose your device and start mirroring right away.</p></div>
+          <select id="usbDevice" aria-label="Connected USB device"><option value="">Checking connected devices…</option></select>
+          <button class="secondary" onclick="connectUsb()">Mirror by USB <svg class="icon"><use href="#icon-arrow"/></svg></button>
+        </section>
+        <section class="configure-prompt" id="configurePrompt">
+          <div class="method-icon setup"><svg class="icon"><use href="#icon-link"/></svg></div>
+          <div class="configure-prompt-copy"><h3>No saved devices yet</h3><p>Set up your Android device once over USB. After that, it will appear here for one-click Wi-Fi connections.</p></div>
+          <button class="primary" onclick="showPage('devices')">Configure a device <svg class="icon"><use href="#icon-arrow"/></svg></button>
+        </section>
 
         <div class="lower">
           <div class="info-panel">
             <div class="panel-title"><h2>Get started in three steps</h2><span class="subtle">QUICK GUIDE</span></div>
             <div class="step"><span>1</span><div><b>Prepare your Android device</b><p>Enable USB debugging in Developer options, then approve your computer when prompted.</p></div></div>
-            <div class="step"><span>2</span><div><b>Choose USB or Wi-Fi</b><p>Use USB for an instant connection, or set up Wi-Fi once with a cable.</p></div></div>
-            <div class="step"><span>3</span><div><b>Start screen mirroring</b><p>Choose your device above. scrcpy opens in its own window.</p></div></div>
+            <div class="step"><span>2</span><div><b>Connect in one click</b><p>Your saved Android devices appear under Quick connect on this page.</p></div></div>
+            <div class="step"><span>3</span><div><b>Not configured yet?</b><p>Open Configure devices and connect your Android device once by USB.</p></div></div>
           </div>
           <div class="info-panel tips-panel">
             <div class="panel-title"><h2>Connection check</h2><span class="subtle">DEVICE STATUS</span></div>
@@ -110,9 +88,19 @@
       </section>
 
       <section class="page" id="devices">
-        <div class="heading"><div><div class="eyebrow">DEVICE LIBRARY</div><h1>My <em>devices.</em></h1><p>Manage your saved wireless connections.</p></div><button class="outline" onclick="refresh()"><svg class="icon"><use href="#icon-refresh"/></svg> Refresh devices</button></div>
+        <div class="heading"><div><div class="eyebrow">DEVICE SETUP</div><h1>Configure <em>devices.</em></h1><p>Connect your Android device over USB once to enable quick Wi-Fi reconnection.</p></div><button class="outline" onclick="refresh()"><svg class="icon"><use href="#icon-refresh"/></svg> Refresh USB devices</button></div>
+        <section class="setup-card">
+          <div class="setup-card-heading"><div class="method-icon setup"><svg class="icon"><use href="#icon-link"/></svg></div><div><h2>Set up a saved Wi-Fi device</h2><p>You need a USB cable for this one-time setup. Both devices must be on the same trusted Wi-Fi network.</p></div></div>
+          <div class="setup-form">
+            <label>1. Choose an authorized USB device<select id="setupDevice"><option value="">Checking connected devices…</option></select></label>
+            <label>2. Give it a name <span class="optional">(optional)</span><input id="deviceName" placeholder="e.g. My tablet" maxlength="50"/></label>
+          </div>
+          <div class="setup-explainer"><svg class="icon"><use href="#icon-shield"/></svg><p>We’ll find the device’s Wi-Fi address and set up the connection automatically. You can unplug the cable afterwards.</p></div>
+          <button class="primary setup-action" onclick="setupWifi()">Set up Wi-Fi and save device <svg class="icon"><use href="#icon-arrow"/></svg></button>
+        </section>
+        <div class="section-title saved-management-title"><h2>Saved devices</h2><span>READY FOR QUICK CONNECT</span></div>
         <div id="deviceCards" class="device-cards"></div>
-        <div class="hint">To save a device, connect it by USB and choose “Set up Wi-Fi” on the Overview page.</div>
+        <div class="hint">Once configured, a device appears on the Overview page so you can connect in one click.</div>
       </section>
 
       <section class="page" id="settings">
@@ -122,7 +110,7 @@
           <div class="settings-grid">
             <label>Video bitrate (Mbps)<input type="number" id="bitrate" min="1" max="80"/></label>
             <label>Maximum frame rate (FPS)<input type="number" id="fps" min="1" max="240"/></label>
-            <label>Maximum size (pixels)<input type="number" id="size" min="240" max="3840"/></label>
+            <label>Maximum size (pixels)<input type="number" id="size" min="0" max="3840" aria-describedby="sizeHint"/><span class="field-hint" id="sizeHint">0 keeps your device’s original resolution (recommended).</span></label>
             <label>Mirroring window title<input id="title"/></label>
           </div>
           <h2>Android tools</h2>

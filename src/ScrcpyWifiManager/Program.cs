@@ -108,7 +108,7 @@ app.MapPost("/api/settings", async (AppConfig settings, CancellationToken ct) =>
     if (settings.Devices.Count>100) throw new InvalidOperationException("Demasiados dispositivos.");
     config.BitRateMbps=Math.Clamp(settings.BitRateMbps,1,80);
     config.MaxFps=Math.Clamp(settings.MaxFps,1,240);
-    config.MaxSize=Math.Clamp(settings.MaxSize,240,3840);
+    config.MaxSize=Math.Clamp(settings.MaxSize,0,3840);
     config.WindowTitle=(settings.WindowTitle ?? "Android")[..Math.Min((settings.WindowTitle ?? "Android").Length,70)];
     config.AdbPath=string.IsNullOrWhiteSpace(settings.AdbPath)?"adb":settings.AdbPath;
     config.ScrcpyPath=string.IsNullOrWhiteSpace(settings.ScrcpyPath)?"scrcpy":settings.ScrcpyPath;

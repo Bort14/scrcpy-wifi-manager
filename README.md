@@ -22,7 +22,9 @@ Scrcpy WiFi Manager is an open-source desktop companion for [scrcpy](https://git
 - Discover authorized Android devices connected over USB.
 - Launch scrcpy for a selected USB or Wi-Fi device.
 - Set up classic ADB-over-TCP on port 5555 over USB and save a device for reconnection.
+- Reconnect to saved devices in one click from the home screen.
 - Configure video bitrate, frame rate, maximum size, window title, and executable paths.
+- Preserve the Android device's native resolution by default.
 - Keep device preferences locally on your Windows account.
 - Run a responsive dashboard served only on `127.0.0.1`; no account or cloud service is required.
 
@@ -42,7 +44,10 @@ The downloadable application is published as a self-contained .NET executable, s
 2. Save the executable anywhere on your PC and run it. No extraction or additional application files are required.
 3. The dashboard opens at <http://127.0.0.1:5088>.
 4. Connect your Android device over USB, enable USB debugging, and approve the authorization prompt.
-5. In the dashboard, refresh the device list and launch mirroring.
+5. Open **Configure devices** and complete the one-time Wi-Fi setup.
+6. On the home screen, select your saved device in **Quick connect** to start mirroring with one click.
+
+To mirror right away without setting up Wi-Fi, select your connected device in the **USB** quick-connect area on the home screen.
 
 The release is a single, self-contained Windows executable. The dashboard assets and .NET runtime are bundled into the `.exe`; no console window or separate app files are needed. Keep the application running while using the dashboard. To open it without automatically launching a browser, run `ScrcpyWifiManager.exe --no-browser` and open the local URL yourself. Running the app again opens the existing dashboard instead of starting a second server. If startup fails, the app shows an error dialog and saves diagnostic details to `%LOCALAPPDATA%\ScrcpyWifiManager\startup-errors.log`.
 
@@ -51,13 +56,13 @@ The release is a single, self-contained Windows executable. The dashboard assets
 ### First-time setup (USB required)
 
 1. Connect the device over USB, authorize the computer, and connect both the device and PC to a trusted private Wi-Fi network.
-2. In **Set up wireless**, choose the authorized USB device and optionally give it a name.
+2. Open **Configure devices**, choose the authorized USB device, and optionally give it a name.
 3. Select **Set up Wi-Fi**. The application reads the IPv4 address from the device's `wlan0` interface, enables ADB TCP/IP on port `5555`, connects, and saves the device.
-4. Disconnect USB and use the saved device to reconnect.
+4. Disconnect USB and select the saved device under **Quick connect** on the home screen.
 
 ### Reconnect
 
-Select a saved device or enter its IPv4 address and port, then choose **Connect & mirror**. If the device reboots or its address changes, repeat the USB setup.
+Select a saved device on the home screen and choose **Connect**. If the device reboots or its address changes, repeat the setup under **Configure devices**.
 
 > **Compatibility:** Wi-Fi setup currently expects the Android Wi-Fi interface to be named `wlan0`. Some devices use another interface or restrict legacy TCP/IP debugging. Android 11 and later wireless pairing with a pairing code is not implemented.
 
@@ -91,7 +96,7 @@ dotnet publish src/ScrcpyWifiManager/ScrcpyWifiManager.csproj `
   --output dist
 ```
 
-The `Build Windows` GitHub Actions workflow builds the standalone executable on pushes and pull requests. Pushing a version tag such as `v0.1.1` also creates a GitHub Release with `ScrcpyWifiManager.exe` attached.
+The `Build Windows` GitHub Actions workflow builds the standalone executable on pushes and pull requests. Pushing a version tag such as `v0.1.3` also creates a GitHub Release with `ScrcpyWifiManager.exe` attached.
 
 ## Contributing
 

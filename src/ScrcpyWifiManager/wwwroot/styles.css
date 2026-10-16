@@ -160,6 +160,68 @@ h1 em { color: #b0a5ff; font-style: normal; }
 .section-title, .panel-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 15px; }
 .section-title h2, .panel-title h2, .settings-card h2 { margin: 0; font-size: 15px; letter-spacing: -.3px; }
 .section-title > span { color: #8490a8; font-size: 9px; font-weight: 750; letter-spacing: 1px; }
+.quick-connect-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(265px, 1fr)); gap: 14px; }
+.quick-device-card {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid #3a3c63;
+  border-radius: 13px;
+  background: linear-gradient(135deg, #191a34, #141a2c);
+}
+.quick-device-identity { min-width: 0; display: flex; align-items: center; gap: 12px; }
+.quick-device-identity > div:last-child { min-width: 0; }
+.quick-device-identity h3 { overflow: hidden; margin: 0 0 5px; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; }
+.quick-device-identity p { overflow: hidden; margin: 0; color: #a0abc0; text-overflow: ellipsis; font-size: 11px; white-space: nowrap; }
+.quick-connect-button { width: auto !important; min-width: 105px; margin: 0 !important; }
+.configure-prompt {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+  margin-top: 15px;
+  padding: 19px;
+  border: 1px dashed #6258ac;
+  border-radius: 13px;
+  background: #151629;
+}
+.configure-prompt[hidden] { display: none; }
+.configure-prompt-copy { flex: 1; }
+.configure-prompt-copy h3 { margin: 0 0 6px; font-size: 14px; }
+.configure-prompt-copy p { max-width: 620px; margin: 0; color: #a0abc0; font-size: 12px; line-height: 1.6; }
+.configure-prompt > button { width: auto; min-width: 188px; margin: 0; }
+.usb-quick-connect {
+  display: grid;
+  grid-template-columns: auto minmax(150px, 1fr) minmax(180px, 1.2fr) minmax(150px, auto);
+  align-items: center;
+  gap: 14px;
+  margin-top: 17px;
+  padding: 15px 17px;
+  border: 1px solid #303a50;
+  border-radius: 13px;
+  background: #111827;
+}
+.usb-quick-copy strong { font-size: 12px; }
+.usb-quick-copy p { margin: 4px 0 0; color: #a0abc0; font-size: 11px; }
+.usb-quick-connect select { min-width: 0; }
+.usb-quick-connect button { width: auto; min-width: 150px; margin: 0; }
+.setup-card { max-width: 830px; padding: 24px; border: 1px solid #6258ac; border-radius: 14px; background: linear-gradient(145deg, #191a34, #141a2c); }
+.setup-card-heading { display: flex; align-items: flex-start; gap: 14px; }
+.setup-card-heading h2 { margin: 1px 0 6px; font-size: 16px; }
+.setup-card-heading p { margin: 0; color: #a0abc0; font-size: 12px; line-height: 1.6; }
+.setup-form { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 22px 0 15px; }
+.setup-form label { display: flex; flex-direction: column; gap: 8px; color: #bac4d6; font-size: 11px; font-weight: 650; }
+.setup-explainer { display: flex; align-items: flex-start; gap: 10px; margin: 5px 0 19px; color: #b8c7d9; }
+.setup-explainer .icon { flex: 0 0 auto; width: 17px; height: 17px; color: #78dabb; }
+.setup-explainer p { margin: 0; font-size: 11px; line-height: 1.6; }
+.setup-action { max-width: 280px; }
+.saved-management-title { max-width: 830px; margin-top: 30px; }
+.device-card .row { justify-content: flex-end; }
+.device-card .row button { max-width: 120px; }
+.device-card .row .remove { flex: 0 0 110px; }
+.device-card { display: flex; flex-direction: column; align-items: flex-start; }
 .methods { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: stretch; gap: 16px; }
 .method { min-width: 0; display: flex; flex-direction: column; padding: 21px; border: 1px solid #303a50; border-radius: 14px; background: #121928; }
 .method.featured { border-color: #6258ac; background: linear-gradient(145deg, #191a34, #141a2c); }
@@ -245,9 +307,9 @@ footer { display: flex; justify-content: space-between; gap: 12px; padding: 24px
 footer span { font-weight: 500; }
 
 @media (max-width: 1180px) {
-  .methods { grid-template-columns: 1fr 1fr; }
-  .method.featured { grid-column: 1 / -1; }
   .lower { grid-template-columns: 1fr; }
+  .usb-quick-connect { grid-template-columns: auto 1fr minmax(180px, 1.2fr); }
+  .usb-quick-connect button { grid-column: 2 / -1; justify-self: end; }
 }
 @media (max-width: 740px) {
   .shell { display: block; }
@@ -262,10 +324,7 @@ footer span { font-weight: 500; }
   .heading { align-items: flex-start; }
   .heading .outline { padding: 9px; font-size: 0; }
   .heading .outline .icon { width: 19px; height: 19px; }
-  .methods, .lower, .settings-grid { grid-template-columns: 1fr; }
-  .method.featured { grid-column: auto; }
-  .method { padding: 19px; }
-  .method > p { min-height: 0; }
+  .lower, .settings-grid, .setup-form { grid-template-columns: 1fr; }
   .statusbar { align-items: flex-start; gap: 11px; padding: 14px; }
   .statusicon { width: 36px; height: 36px; }
   .status-copy { padding-top: 1px; }
@@ -273,5 +332,14 @@ footer span { font-weight: 500; }
   .status-tag { align-self: flex-start; margin: 0 0 0 auto; padding: 6px; font-size: 8px; }
   .section-title > span { display: none; }
   .settings-actions button { width: 100%; }
+  .quick-device-card { align-items: flex-start; flex-direction: column; }
+  .quick-connect-button { width: 100% !important; }
+  .configure-prompt { align-items: flex-start; flex-direction: column; }
+  .configure-prompt > button, .setup-action { width: 100%; max-width: none; }
+  .usb-quick-connect { grid-template-columns: auto 1fr; }
+  .usb-quick-connect select, .usb-quick-connect button { grid-column: 1 / -1; width: 100%; }
+  .setup-card { padding: 18px; }
+  .device-card .row { width: 100%; }
+  .device-card .row .remove { max-width: none; }
   footer { flex-direction: column; padding: 19px 18px; }
 }

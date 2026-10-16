@@ -58,7 +58,9 @@ public sealed class AndroidService(AppConfig config)
 
     public System.Diagnostics.Process Launch(string serial)
     {
-        var args = new List<string> { "-s", serial, $"--video-bit-rate={Math.Clamp(config.BitRateMbps, 1, 80)}M", $"--max-fps={Math.Clamp(config.MaxFps, 1, 240)}", $"--max-size={Math.Clamp(config.MaxSize, 240, 3840)}", "--window-title", config.WindowTitle };
+        var args = new List<string> { "-s", serial, $"--video-bit-rate={Math.Clamp(config.BitRateMbps, 1, 80)}M", $"--max-fps={Math.Clamp(config.MaxFps, 1, 240)}" };
+        if (config.MaxSize > 0) args.Add($"--max-size={Math.Clamp(config.MaxSize, 240, 3840)}");
+        args.AddRange(["--window-title", config.WindowTitle]);
         return CommandRunner.StartDetached(config.ScrcpyPath, args);
     }
 }

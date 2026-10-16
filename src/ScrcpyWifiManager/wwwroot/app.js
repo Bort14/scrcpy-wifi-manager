@@ -68,6 +68,8 @@ function renderDeviceSummary(devices) {
     if (wired.length) connectionTypes.push(`${wired.length} by USB`);
     if (wireless.length) connectionTypes.push(`${wireless.length} over Wi-Fi`);
     message = `${ready.length} authorized device${ready.length === 1 ? '' : 's'} ready (${connectionTypes.join(', ')}).`;
+  } else if (settings.devices.length) {
+    message = `No USB device connected. ${settings.devices.length} saved Wi-Fi device${settings.devices.length === 1 ? ' is' : 's are'} ready for quick connect.`;
   } else if (unauthorized.length) {
     message = 'A device was found, but it has not authorized this computer. Unlock it and accept the USB debugging prompt.';
   } else {
@@ -76,7 +78,9 @@ function renderDeviceSummary(devices) {
   summary.lastElementChild.textContent = message;
 
   if (ready.length) {
-    showStatus(`${message} Choose USB to mirror now, or set up Wi-Fi for wireless reconnection.`, 'info');
+    showStatus(`${message} Choose a saved device below or mirror over USB.`, 'info');
+  } else if (settings.devices.length) {
+    showStatus(message, 'info', 'Your saved devices are ready');
   } else {
     showStatus(message, 'warning', unauthorized.length ? 'Authorization needed' : 'Connect your Android device');
   }
@@ -114,15 +118,6 @@ function createIcon(symbol) {
 }
 
 function renderSavedDevices() {
-  const select = $('savedDevice');
-  const previous = select.value;
-  select.replaceChildren();
-  addOption(select, '', settings.devices.length ? 'Choose a saved device' : 'No saved devices yet');
-  settings.devices.forEach(device => {
-    addOption(select, `${device.ip}:${device.port}`, `${device.name} · ${device.ip}`);
-  });
-  select.value = previous;
-
   const cards = $('deviceCards');
   cards.replaceChildren();
   if (!settings.devices.length) {
@@ -132,9 +127,9 @@ function renderSavedDevices() {
     icon.className = 'method-icon wifi';
     icon.appendChild(createIcon('icon-wifi'));
     const title = document.createElement('h2');
-    title.textContent = 'No saved devices yet';
+    title.textContent = 'No devices configured yet';
     const text = document.createElement('p');
-    text.textContent = 'Connect an Android device by USB and choose “Set up Wi-Fi” to save it here.';
+    text.textContent = 'Connect your Android device by USB and complete the one-time Wi-Fi setup above.';
     empty.append(icon, title, text);
     cards.appendChild(empty);
     return;
@@ -152,14 +147,6 @@ function renderSavedDevices() {
     address.textContent = `${device.ip}:${device.port}`;
     const actions = document.createElement('div');
     actions.className = 'row';
-    const connect = document.createElement('button');
-    connect.className = 'primary';
-    connect.textContent = 'Connect & mirror';
-    connect.appendChild(createIcon('icon-arrow'));
-    connect.onclick = () => execute(async () => {
-      const result = await api('connect', { ip: device.ip, port: device.port, save: false, name: device.name });
-      showStatus(`scrcpy is starting for ${result.endpoint}.`, 'success', 'Wi-Fi connection started');
-    });
     const remove = document.createElement('button');
     remove.className = 'remove';
     remove.textContent = 'Remove';
@@ -171,38 +158,53 @@ function renderSavedDevices() {
         });
       }
     };
-    actions.append(connect, remove);
+    actions.append(remove);
     card.append(icon, name, address, actions);
     cards.appendChild(card);
+  }
+}
+
+function renderQuickConnect() {
+  const container = $('quickConnectDevices');
+  const prompt = $('configurePrompt');
+  container.replaceChildren();
+  prompt.hidden = settings.devices.length > 0;
+
+  for (const device of settings.devices) {
+    const card = document.createElement('article');
+    card.className = 'quick-device-card';
+    const identity = document.createElement('div');
+    identity.className = 'quick-device-identity';
+    const icon = document.createElement('div');
+    icon.className = 'method-icon wifi';
+    icon.appendChild(createIcon('icon-wifi'));
+    const details = document.createElement('div');
+    const name = document.createElement('h3');
+    name.textContent = device.name;
+    const address = document.createElement('p');
+    address.textContent = `${device.ip}:${device.port}`;
+    details.append(name, address);
+    identity.append(icon, details);
+    const connect = document.createElement('button');
+    connect.className = 'primary quick-connect-button';
+    connect.textContent = 'Connect';
+    connect.appendChild(createIcon('icon-arrow'));
+    connect.setAttribute('aria-label', `Connect to ${device.name}`);
+    connect.onclick = () => execute(async () => {
+      showStatus(`Connecting to ${device.name} over Wi-Fi…`, 'info', 'Connecting to saved device');
+      const result = await api('connect', { ip: device.ip, port: device.port, save: false, name: device.name });
+      showStatus(`scrcpy is starting for ${result.endpoint}.`, 'success', 'Connection started');
+    });
+    card.append(identity, connect);
+    container.appendChild(card);
   }
 }
 
 async function load() {
   const state = await api('status');
   settings = state.settings;
+  renderQuickConnect();
   renderSavedDevices();
-}
-
-$('savedDevice').addEventListener('change', event => {
-  if (!event.target.value) return;
-  const device = settings.devices.find(item => `${item.ip}:${item.port}` === event.target.value);
-  if (!device) return;
-  $('wifiIp').value = device.ip;
-  $('wifiPort').value = device.port;
-  showStatus(`${device.name} is selected. Choose Connect & mirror to start.`, 'info', 'Saved device selected');
-});
-
-async function connectWifi() {
-  await execute(async () => {
-    showStatus('Connecting to your Android device over Wi-Fi…', 'info', 'Connecting over Wi-Fi');
-    const result = await api('connect', {
-      ip: $('wifiIp').value.trim(),
-      port: Number($('wifiPort').value),
-      save: true,
-      name: 'Android device'
-    });
-    showStatus(`scrcpy is starting for ${result.endpoint}.`, 'success', 'Wi-Fi connection started');
-  });
 }
 
 async function connectUsb() {
@@ -224,8 +226,9 @@ async function setupWifi() {
       serial,
       name: $('deviceName').value.trim() || 'Android device'
     });
-    $('wifiIp').value = result.ip;
-    showStatus(`Wi-Fi is ready for ${result.endpoint}. You can disconnect the USB cable.`, 'success', 'Wireless setup complete');
+    $('deviceName').value = '';
+    showStatus(`${result.endpoint} has been saved. You can now connect from Quick connect on the home page.`, 'success', 'Device configured');
+    showPage('dashboard');
   });
 }
 
@@ -253,19 +256,25 @@ async function saveSettings() {
       adbPath: $('adb').value,
       scrcpyPath: $('scrcpy').value
     };
-    await api('settings', updated);
+    const saved = await api('settings', updated);
+    settings = saved;
     showStatus('Your streaming and tool preferences have been saved on this computer.', 'success', 'Settings saved');
   });
 }
 
+function showPage(pageId) {
+  const target = $(pageId);
+  const button = document.querySelector(`[data-tab="${pageId}"]`);
+  if (!target || !button) return;
+  document.querySelectorAll('.nav').forEach(item => item.classList.toggle('active', item === button));
+  document.querySelectorAll('.page').forEach(page => page.classList.toggle('active', page === target));
+  $('crumb').textContent = button.textContent.trim();
+  if (pageId === 'settings') fillSettings();
+}
+
 for (const button of document.querySelectorAll('[data-tab]')) {
   button.addEventListener('click', () => {
-    document.querySelectorAll('.nav').forEach(item => item.classList.remove('active'));
-    button.classList.add('active');
-    document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-    $(button.dataset.tab).classList.add('active');
-    $('crumb').textContent = button.textContent.trim();
-    if (button.dataset.tab === 'settings') fillSettings();
+    showPage(button.dataset.tab);
   });
 }
 
@@ -279,5 +288,5 @@ for (const button of document.querySelectorAll('[data-tab]')) {
 })();
 
 setInterval(() => {
-  load().catch(error => showError(error));
-}, 6000);
+  load().catch(showError);
+}, 10000);
