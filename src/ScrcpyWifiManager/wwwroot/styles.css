@@ -40,17 +40,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   border-right: 1px solid #20283c;
 }
 .brand { display: flex; gap: 12px; align-items: center; padding: 5px 9px 47px; }
-.brandmark {
-  width: 42px;
-  height: 42px;
-  display: grid;
-  place-items: center;
-  border-radius: 13px;
-  color: white;
-  background: linear-gradient(145deg, #776aff, #4b65e6);
-  box-shadow: 0 5px 25px #6154ef44;
-}
-.brandmark svg { width: 25px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.brandmark { width: 42px; height: 42px; flex: 0 0 auto; display: block; border-radius: 13px; filter: drop-shadow(0 5px 12px #6154ef55); }
 .brand b { display: block; font-size: 16px; letter-spacing: -.7px; }
 .brand b span { color: #9b91ff; }
 .brand small { display: block; margin-top: 5px; color: #8993b0; font-size: 8px; letter-spacing: 1.4px; }

@@ -44,7 +44,7 @@ The downloadable application is published as a self-contained .NET executable, s
 4. Connect your Android device over USB, enable USB debugging, and approve the authorization prompt.
 5. In the dashboard, refresh the device list and launch mirroring.
 
-The release is a single, self-contained Windows executable. The dashboard assets and .NET runtime are bundled into the `.exe`; no console window or separate app files are needed. Keep the application running while using the dashboard. To open it without automatically launching a browser, run `ScrcpyWifiManager.exe --no-browser` and open the local URL yourself.
+The release is a single, self-contained Windows executable. The dashboard assets and .NET runtime are bundled into the `.exe`; no console window or separate app files are needed. Keep the application running while using the dashboard. To open it without automatically launching a browser, run `ScrcpyWifiManager.exe --no-browser` and open the local URL yourself. Running the app again opens the existing dashboard instead of starting a second server. If startup fails, the app shows an error dialog and saves diagnostic details to `%LOCALAPPDATA%\ScrcpyWifiManager\startup-errors.log`.
 
 ## Connect over Wi-Fi
 

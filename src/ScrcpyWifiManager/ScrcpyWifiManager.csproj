@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <AssemblyName>ScrcpyWifiManager</AssemblyName>
     <RootNamespace>ScrcpyWifiManager</RootNamespace>
+    <ApplicationIcon>Assets\ScrcpyWifiManager.ico</ApplicationIcon>
     <PublishSingleFile>true</PublishSingleFile>
     <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
@@ -14,6 +15,7 @@
   <ItemGroup>
     <Content Remove="wwwroot\**\*" />
     <EmbeddedResource Include="wwwroot\**\*" LogicalName="ScrcpyWifiManager.Web.%(RecursiveDir)%(Filename)%(Extension)" />
+    <EmbeddedResource Include="Assets\logo.svg" LogicalName="ScrcpyWifiManager.Web.logo.svg" />
   </ItemGroup>
   <Target Name="RemoveUnusedStaticWebAssetsManifest" AfterTargets="Publish">
     <Delete Files="$(PublishDir)$(AssemblyName).staticwebassets.endpoints.json" />

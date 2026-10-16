@@ -1,11 +1,24 @@
 using System.Diagnostics;
 using System.Net;
-using System.Net.Sockets;
 using System.Text.Json;
+using System.Runtime.InteropServices;
 using ScrcpyWifiManager;
 
+using var instanceLock = new Semaphore(1, 1, ProgramStartup.InstanceLockName);
+if (!instanceLock.WaitOne(0))
+{
+    ProgramStartup.OpenDashboard();
+    return;
+}
+
+if (await ProgramStartup.IsDashboardRunningAsync())
+{
+    ProgramStartup.OpenDashboard();
+    return;
+}
+
 var builder = WebApplication.CreateBuilder(args);
-builder.WebHost.UseUrls("http://127.0.0.1:5088");
+builder.WebHost.UseUrls(ProgramStartup.DashboardUrl);
 var app = builder.Build();
 var assembly = typeof(AppConfig).Assembly;
 string ReadDashboardAsset(string name)
@@ -18,9 +31,11 @@ string ReadDashboardAsset(string name)
 var dashboardHtml = ReadDashboardAsset("index.html");
 var dashboardScript = ReadDashboardAsset("app.js");
 var dashboardStyles = ReadDashboardAsset("styles.css");
+var dashboardLogo = ReadDashboardAsset("logo.svg");
 app.MapGet("/", () => Results.Content(dashboardHtml, "text/html; charset=utf-8"));
 app.MapGet("/app.js", () => Results.Content(dashboardScript, "text/javascript; charset=utf-8"));
 app.MapGet("/styles.css", () => Results.Content(dashboardStyles, "text/css; charset=utf-8"));
+app.MapGet("/logo.svg", () => Results.Content(dashboardLogo, "image/svg+xml; charset=utf-8"));
 
 // Strictly local control surface. No LAN listening or remote control.
 app.Use(async (context, next) =>
@@ -109,11 +124,86 @@ Log("Panel iniciado en http://127.0.0.1:5088");
 app.Lifetime.ApplicationStarted.Register(() =>
 {
     if (args.Contains("--no-browser")) return;
-    try { Process.Start(new ProcessStartInfo("http://127.0.0.1:5088") {UseShellExecute=true}); }
-    catch { /* URL is printed for manual opening */ }
+    ProgramStartup.OpenDashboard();
 });
-await app.RunAsync();
+try
+{
+    await app.RunAsync();
+}
+catch (Exception ex)
+{
+    ProgramStartup.ShowStartupError(ex);
+}
+finally
+{
+    instanceLock.Release();
+}
 
 record DeviceRequest(string Serial,string? Name);
 record ConnectRequest(string Ip,int Port,bool Save,string? Name);
 record RemoveRequest(string Ip,int Port);
+
+static class ProgramStartup
+{
+    public const string DashboardUrl = "http://127.0.0.1:5088";
+    public const string InstanceLockName = @"Local\ScrcpyWifiManager";
+
+    public static async Task<bool> IsDashboardRunningAsync()
+    {
+        using var client = new HttpClient { Timeout = TimeSpan.FromMilliseconds(750) };
+        try
+        {
+            using var response = await client.GetAsync($"{DashboardUrl}/api/status");
+            if (!response.IsSuccessStatusCode) return false;
+            using var document = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+            return document.RootElement.TryGetProperty("settings", out _)
+                && document.RootElement.TryGetProperty("logs", out _);
+        }
+        catch (HttpRequestException) { return false; }
+        catch (TaskCanceledException) { return false; }
+        catch (JsonException) { return false; }
+    }
+
+    public static void OpenDashboard()
+    {
+        try
+        {
+            Process.Start(new ProcessStartInfo(DashboardUrl) { UseShellExecute = true });
+        }
+        catch (Exception ex)
+        {
+            ShowStartupError(new InvalidOperationException(
+                $"The dashboard is available at {DashboardUrl}, but Windows could not open a browser: {ex.Message}", ex));
+        }
+    }
+
+    public static void ShowStartupError(Exception exception)
+    {
+        var logPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "ScrcpyWifiManager",
+            "startup-errors.log");
+        var message = $"Scrcpy WiFi Manager could not start its local dashboard at {DashboardUrl}."
+            + $"{Environment.NewLine}{Environment.NewLine}Another application may already be using port 5088."
+            + $"{Environment.NewLine}{Environment.NewLine}Details: {exception.GetBaseException().Message}";
+        try
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(logPath)!);
+            File.AppendAllText(logPath, $"{DateTime.Now:O}{Environment.NewLine}{exception}{Environment.NewLine}{Environment.NewLine}");
+            message += $"{Environment.NewLine}{Environment.NewLine}A diagnostic log was saved to:{Environment.NewLine}{logPath}";
+        }
+        catch (IOException logException)
+        {
+            message += $"{Environment.NewLine}{Environment.NewLine}Could not write the diagnostic log: {logException.Message}";
+        }
+        catch (UnauthorizedAccessException logException)
+        {
+            message += $"{Environment.NewLine}{Environment.NewLine}Could not write the diagnostic log: {logException.Message}";
+        }
+
+        MessageBox(IntPtr.Zero, message, "Scrcpy WiFi Manager", 0x10);
+    }
+
+    [DllImport("user32.dll", CharSet = CharSet.Unicode, EntryPoint = "MessageBoxW")]
+    private static extern int MessageBox(IntPtr window, string text, string caption, uint type);
+}
