@@ -17,6 +17,8 @@ Scrcpy WiFi Manager is an open-source desktop companion for [scrcpy](https://git
 
 > **Unofficial project:** This application is not affiliated with, endorsed by, or maintained by the scrcpy or Android teams. It does not include or redistribute scrcpy or Android Platform Tools.
 
+The dashboard also includes a setup guide for mirroring an iPhone or iPad to Windows through a separately installed AirPlay receiver. iOS mirroring is view-only and is not handled by this application.
+
 ## Features
 
 - Discover authorized Android devices connected over USB.
@@ -25,6 +27,7 @@ Scrcpy WiFi Manager is an open-source desktop companion for [scrcpy](https://git
 - Reconnect to saved devices in one click from the home screen.
 - Configure video bitrate, frame rate, maximum size, window title, and executable paths.
 - Preserve the Android device's native resolution by default.
+- Provide setup guidance for iPhone/iPad screen mirroring through a third-party Windows AirPlay receiver.
 - Keep device preferences locally on your Windows account.
 - Run a responsive dashboard served only on `127.0.0.1`; no account or cloud service is required.
 
@@ -65,6 +68,12 @@ The release is a single, self-contained Windows executable. The dashboard assets
 Select a saved device on the home screen and choose **Connect**. If the device reboots or its address changes, repeat the setup under **Configure devices**.
 
 > **Compatibility:** Wi-Fi setup currently expects the Android Wi-Fi interface to be named `wlan0`. Some devices use another interface or restrict legacy TCP/IP debugging. Android 11 and later wireless pairing with a pairing code is not implemented.
+
+## Mirror an iPhone or iPad
+
+Open **iPhone / iPad** in the dashboard for the setup steps. Windows does not natively act as an AirPlay receiver, so install and launch a trusted third-party Windows receiver that supports AirPlay screen mirroring. The iPhone and PC must be on the same Wi-Fi network; then start **Screen Mirroring** from Control Center on the iPhone and select the receiver.
+
+This is a viewing guide only: it does not control the iPhone, include or detect a receiver, or handle the AirPlay stream. Receiver availability, pricing, privacy, and firewall requirements depend on the third-party software. Review its terms and privacy information before installing it.
 
 ## Security and privacy
 

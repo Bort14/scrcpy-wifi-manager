@@ -51,6 +51,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   letter-spacing: 1.1px;
 }
 .navlabel { padding: 0 16px 12px; }
+.nav-items { display: flex; flex-direction: column; }
 .nav {
   width: 100%;
   display: flex;
@@ -70,6 +71,31 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .nav .icon { width: 18px; height: 18px; }
 .nav.active { color: #d1ccff; background: #282343; }
 .nav:hover { color: white; background: #1c2335; }
+.airplay-notice {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+  padding: 24px;
+  border: 1px solid #3a3b64;
+  border-radius: 14px;
+  background: linear-gradient(120deg, #191a34, #121a29);
+}
+.airplay-notice-icon { display: grid; width: 46px; height: 46px; place-items: center; border-radius: 12px; color: #c1b8ff; background: #302b53; }
+.airplay-notice-icon .icon { width: 23px; height: 23px; }
+.airplay-label { color: #a59aff; font-size: 9px; font-weight: 800; letter-spacing: 1.4px; }
+.airplay-notice h2 { margin: 6px 0 8px; font-size: 17px; }
+.airplay-notice p, .airplay-step p, .airplay-limitations li { margin: 0; color: #aab5c9; font-size: 13px; line-height: 1.7; }
+.airplay-steps-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 28px 0 14px; }
+.airplay-steps-title h2, .airplay-limitations h2 { margin: 0; font-size: 15px; }
+.airplay-steps-title > span { color: #8490a8; font-size: 9px; font-weight: 750; letter-spacing: 1px; }
+.airplay-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.airplay-step { min-width: 0; padding: 20px; border: 1px solid #303a50; border-radius: 13px; background: #111827; }
+.airplay-step-number { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; margin-bottom: 17px; border-radius: 10px; color: #c1b8ff; background: #302b53; font-size: 11px; font-weight: 800; }
+.airplay-step h3 { margin: 0 0 8px; font-size: 14px; }
+.airplay-limitations { margin-top: 18px; padding: 21px 24px; border: 1px solid #303a50; border-radius: 13px; background: #101725; }
+.airplay-limitations ul { display: grid; gap: 8px; margin: 13px 0 0; padding-left: 19px; }
+.airplay-limitations li { padding-left: 3px; }
 .sidebar-bottom {
   display: flex;
   flex-direction: column;
@@ -317,7 +343,8 @@ footer span { font-weight: 500; }
   .sidebar { display: block; width: 100%; padding: 12px; border-right: 0; border-bottom: 1px solid #20283c; }
   .brand { padding: 2px 4px 12px; }
   .navlabel, .sidebar-bottom { display: none; }
-  .nav { display: inline-flex; width: auto; margin: 0 3px 0 0; padding: 9px 10px; font-size: 11px; }
+  .nav-items { flex-direction: row; gap: 4px; overflow-x: auto; }
+  .nav { width: auto; flex: 0 0 auto; margin: 0; padding: 9px 10px; font-size: 11px; white-space: nowrap; }
   .nav .icon { width: 16px; height: 16px; }
   .topbar { height: 54px; padding: 0 18px; }
   .pill { padding: 7px 9px; font-size: 9px; }
@@ -325,13 +352,18 @@ footer span { font-weight: 500; }
   .heading { align-items: flex-start; }
   .heading .outline { padding: 9px; font-size: 0; }
   .heading .outline .icon { width: 19px; height: 19px; }
-  .lower, .settings-grid, .setup-form { grid-template-columns: 1fr; }
+  .lower, .settings-grid, .setup-form, .airplay-steps { grid-template-columns: 1fr; }
   .statusbar { align-items: flex-start; gap: 11px; padding: 14px; }
   .statusicon { width: 36px; height: 36px; }
   .status-copy { padding-top: 1px; }
   .statusbar p { max-width: 34ch; }
   .status-tag { align-self: flex-start; margin: 0 0 0 auto; padding: 6px; font-size: 8px; }
   .section-title > span { display: none; }
+  .airplay-notice { gap: 14px; padding: 18px; }
+  .airplay-steps-title > span { display: none; }
+  .airplay-step { padding: 18px; }
+  .airplay-step-number { margin-bottom: 12px; }
+  .airplay-limitations { padding: 18px; }
   .settings-actions button { width: 100%; }
   .quick-device-card { align-items: flex-start; flex-direction: column; }
   .quick-connect-button { width: 100% !important; }
