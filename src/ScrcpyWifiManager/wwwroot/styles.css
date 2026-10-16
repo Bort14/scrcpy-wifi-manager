@@ -178,20 +178,21 @@ h1 em { color: #b0a5ff; font-style: normal; }
 .quick-device-identity p { overflow: hidden; margin: 0; color: #a0abc0; text-overflow: ellipsis; font-size: 11px; white-space: nowrap; }
 .quick-connect-button { width: auto !important; min-width: 105px; margin: 0 !important; }
 .configure-prompt {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: 17px;
+  gap: 20px;
   margin-top: 15px;
-  padding: 19px;
+  padding: 22px 24px;
   border: 1px dashed #6258ac;
   border-radius: 13px;
-  background: #151629;
+  background: linear-gradient(115deg, #191a34, #121827 82%);
 }
 .configure-prompt[hidden] { display: none; }
-.configure-prompt-copy { flex: 1; }
-.configure-prompt-copy h3 { margin: 0 0 6px; font-size: 14px; }
-.configure-prompt-copy p { max-width: 620px; margin: 0; color: #a0abc0; font-size: 12px; line-height: 1.6; }
-.configure-prompt > button { width: auto; min-width: 188px; margin: 0; }
+.configure-prompt-copy { min-width: 0; }
+.configure-prompt-copy h3 { margin: 0 0 7px; font-size: 16px; letter-spacing: -.2px; }
+.configure-prompt-copy p { max-width: 54ch; margin: 0; color: #aab5c9; font-size: 13px; line-height: 1.7; }
+.configure-prompt > button.primary { width: auto; min-width: 200px; margin: 0; }
 .usb-quick-connect {
   display: grid;
   grid-template-columns: auto minmax(150px, 1fr) minmax(180px, 1.2fr) minmax(150px, auto);
@@ -334,8 +335,9 @@ footer span { font-weight: 500; }
   .settings-actions button { width: 100%; }
   .quick-device-card { align-items: flex-start; flex-direction: column; }
   .quick-connect-button { width: 100% !important; }
-  .configure-prompt { align-items: flex-start; flex-direction: column; }
-  .configure-prompt > button, .setup-action { width: 100%; max-width: none; }
+  .configure-prompt { grid-template-columns: auto minmax(0, 1fr); gap: 14px; padding: 18px; }
+  .configure-prompt > button.primary { grid-column: 1 / -1; width: 100%; min-width: 0; }
+  .setup-action { width: 100%; max-width: none; }
   .usb-quick-connect { grid-template-columns: auto 1fr; }
   .usb-quick-connect select, .usb-quick-connect button { grid-column: 1 / -1; width: 100%; }
   .setup-card { padding: 18px; }
